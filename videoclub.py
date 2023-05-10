@@ -23,6 +23,16 @@ class VideoClub:
             print("************************")
             pelicula.mostrar_pelicula()
 
+    def listar_pelicula_disponible(self):
+        for pelicula in self.peliculas:
+            print("************************")
+            pelicula.mostrar_pelicula_disponible()
+
+    def listar_pelicula_alquilada(self):
+        for pelicula in self.peliculas:
+            print("************************")
+            pelicula.mostrar_pelicula_alquilada()
+
     def modificar_pelicula(self, codigo):
         pos_pelicula = self.buscar_pelicula(codigo)
         if pos_pelicula != -1:
@@ -52,9 +62,10 @@ class VideoClub:
                     
                 except ValueError:
                     print("************************")
-                    print("Error - El dato debe ser entero")
+                    print("Error - El dato ingresado debe ser entero")
                     print("************************")
-                    input()
+                    print("")
+                    input("Enter para continuar")
             else:
                 return False
         else:
@@ -66,6 +77,45 @@ class VideoClub:
             del(self.peliculas[pos])
             return True
         return False
+    
+    def alquilar_pelicula(self, codigo_pelicula, codigo_socio):
+        pos_pelicula = self.buscar_pelicula(codigo_pelicula)
+        pos_socio = self.buscar_socio(codigo_socio)
+
+        if pos_pelicula != -1 and pos_socio != -1:
+
+            if self.socios[pos_socio].peliculas_alquiladas != 0:
+                print("Info - El socio ya tiene una pelicula alquilada")
+                return False
+            else:
+                if self.peliculas[pos_pelicula].alquilada == False:
+                    self.peliculas[pos_pelicula].alquilada = True
+                    self.peliculas[pos_pelicula].socio = codigo_socio
+                    self.socios[pos_socio].peliculas_alquiladas += 1
+                    titulo_pelicula = self.peliculas[pos_pelicula].titulo
+                    self.socios[pos_socio].titulo_pelicula = titulo_pelicula
+                    return True
+                else:
+                    return False
+        else:
+            return False
+        
+    def devolver_pelicula(self, codigo_pelicula, codigo_socio):
+        pos_pelicula = self.buscar_pelicula(codigo_pelicula)
+        pos_socio = self.buscar_socio(codigo_socio)
+
+        if pos_pelicula != -1 and pos_socio != -1:
+            if self.peliculas[pos_pelicula].alquilada == True:
+                self.peliculas[pos_pelicula].alquilada = False
+                self.peliculas[pos_pelicula].socio = ""
+                self.socios[pos_socio].peliculas_alquiladas -= 1
+                self.socios[pos_socio].titulo_pelicula = ""
+                return True
+            else:
+                return False
+        else:
+            return False
+
 
     def listar_socios(self):
         for socio in self.socios:
@@ -109,6 +159,8 @@ class VideoClub:
                     print("************************")
                     print("Error - el dato ingresado debe ser entero")
                     print("************************")
+                    print("")
+                    input("Enter para continuar")
             else:
                 return False
         else:
